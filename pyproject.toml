@@ -1,0 +1,15 @@
+[project]
+name = "simbirsoftapi2"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "allure-pytest>=2.15.2",
+    "faker>=38.2.0",
+    "pydantic>=2.12.5",
+    "pytest>=9.0.1",
+    "pytest-xdist>=3.8.0",
+    "python-dotenv>=1.2.1",
+    "requests>=2.32.5",
+]
