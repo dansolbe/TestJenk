@@ -1,42 +1,28 @@
 pipeline {
     agent any
 
+    tools {
+        allure 'allure'
+    }
+
     environment {
         BASE_URL = 'https://cloud-api.yandex.net/v1/disk'
         RESOURCE_ENDPOINT = 'resources'
         TRASH_ENDPOINT = 'trash/resources'
         OAUTH_TOKEN = credentials('Ya_disk_token')
-        ALLURE_VERSION = '2.13.8'
     }
 
     stages {
-        stage('Install Python, Allure and uv') {
+        stage('Install Python and uv') {
             steps {
                 sh '''
-                    # Install system dependencies
-                    apt-get update && apt-get install -y python3 curl unzip
-
-                    # Install uv
+                    apt-get update && apt-get install -y python3 curl
                     curl -LsSf https://astral.sh/uv/install.sh | sh
                     export PATH="$HOME/.local/bin:$PATH"
-
-                    # Install Allure directly in the workspace (current directory)
-                    echo "Installing Allure ${ALLURE_VERSION}..."
-
-                    if [ ! -d "allure-${ALLURE_VERSION}" ]; then
-                        curl -Lo allure.zip "https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.zip"
-                        unzip -q allure.zip
-                        rm allure.zip
-                        chmod -R 755 "allure-${ALLURE_VERSION}"
-                    fi
-
-                    # Verify installation
-                    "./allure-${ALLURE_VERSION}/bin/allure" --version
                     uv --version
                 '''
             }
         }
-
         stage('Create .env file') {
             steps {
                 sh '''
@@ -61,7 +47,7 @@ pipeline {
         stage('Run tests') {
             steps {
                 sh '''
-                    export PATH="$HOME/.local/bin:$PATH"
+                    export PATH="$HOME/.local/bin:$PWD/allure-2.13.8/bin:$PATH"
                     uv run pytest --alluredir=allure_results
                 '''
             }
@@ -70,13 +56,9 @@ pipeline {
 
     post {
         always {
-            script {
-                // Use Allure from the workspace
-                allure commandline: "allure-${ALLURE_VERSION}",
-                       includeProperties: false,
-                       results: [[path: 'allure_results']],
-                       report: 'allure_report'
-            }
+            allure includeProperties: false,
+                   jdk: '',
+                   results: [[path: 'allure_results']]
         }
     }
 }
