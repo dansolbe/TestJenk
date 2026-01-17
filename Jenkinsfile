@@ -58,9 +58,9 @@ pipeline {
         always {
             allure includeProperties: false,
                    results: [[path: 'allure_results']],
-                   //report: 'allure_report',
-                   //reportName: "Allure Report - Build $BUILD_NUMBER",
-                   //reportBuildPolicy: 'ALWAYS'
+                   report: 'allure_report',
+                   reportName: "Allure Report - Build $BUILD_NUMBER",
+                   reportBuildPolicy: 'ALWAYS'
         }
     }
 }
