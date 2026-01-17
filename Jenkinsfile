@@ -57,10 +57,23 @@ pipeline {
     post {
         always {
             script {
-                def allureTool = tool name: 'allure'
-                echo "Allure tool path: ${allureTool}"
+                // Use the explicit path we know exists
+                def allurePath = '/var/jenkins_home/tools/ru.yandex.qatools.allure.jenkins.tools.AllureCommandlineInstallation/allure'
 
-                allure includeProperties: false,
+                // First, verify the Allure installation exists and works
+                sh """
+                    if [ -f '${allurePath}/bin/allure' ]; then
+                        echo "Allure found at ${allurePath}"
+                        ${allurePath}/bin/allure --version
+                    else
+                        echo "Allure not found at ${allurePath}"
+                        ls -la ${allurePath} || true
+                    fi
+                """
+
+                // Try using allure with the explicit commandline path
+                allure commandline: "${allurePath}",
+                       includeProperties: false,
                        results: [[path: 'allure_results']],
                        report: 'allure_report'
             }
