@@ -75,7 +75,7 @@ pipeline {
         always {
             allure includeProperties: false,
                    results: [[path: 'allure_results']],
-                   reportDir: 'allure_report',
+                   report: 'allure_report',
                    reportName: "Allure Report - Build $BUILD_NUMBER",
                    reportBuildPolicy: 'ALWAYS'
         }
