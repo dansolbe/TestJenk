@@ -56,11 +56,14 @@ pipeline {
 
     post {
         always {
-            allure includeProperties: false,
-                   results: [[path: 'allure_results']],
-                   report: 'allure_report',
-                   reportName: "Allure Report - Build $BUILD_NUMBER",
-                   reportBuildPolicy: 'ALWAYS'
+            script {
+                def allureTool = tool name: 'allure'
+                echo "Allure tool path: ${allureTool}"
+
+                allure includeProperties: false,
+                       results: [[path: 'allure_results']],
+                       report: 'allure_report'
+            }
         }
     }
 }
